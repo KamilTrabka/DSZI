@@ -1,0 +1,2 @@
+# DSZI
+Projekt SZI
