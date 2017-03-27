@@ -10,6 +10,8 @@ Skibiński Patryk
 
 Trąbka Kamil
 
+Woźnica Dawid
+
 
 Temat: Inteligentny wózek widłowy.
 
