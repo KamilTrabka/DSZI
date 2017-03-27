@@ -27,7 +27,7 @@ Skibiński: 29.05.
 
 Algorytm A*:
 https://pl.wikipedia.org/wiki/Algorytm_A*
-
+</br>
 Podział ról:
 - sieć neuronowa do rozpoznawania kontenerów
   - numery
