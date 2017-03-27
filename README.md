@@ -34,3 +34,5 @@ Podział ról:
   - obrazki (symbole)
 - drzewo decyzyjne
 - metoda rozmieszczania (globalna)
+
+Michał Kędzierski - korzystam z netbeans, stąd folder nbproject (tak zakladam)
