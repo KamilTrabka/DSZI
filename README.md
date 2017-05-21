@@ -1,38 +1,28 @@
 # DSZI
-Projekt SZI
+
+## Temat:
+**Inteligenty wózek widłowy**
+
+* Repo: https://github.com/KamilTrabka/DSZI
+
+* Raczej Eclipse
 
 
-Skład grupy:
+## Skład grupy:
+* Kędzierski Michał
+* Skibiński Patryk
+* Trąbka Kamil
+* Woźnica Dawid
 
-Kędzierski Michał
-
-Skibiński Patryk
-
-Trąbka Kamil
-
-Woźnica Dawid
-
-
-Temat: Inteligentny wózek widłowy.
-
-Repo: https://github.com/KamilTrabka/DSZI
-
-Terminy:
-
-Kędzierski: 15.05
-
-Trąbka: 22.05
-
-Skibiński: 29.05.
-
-Algorytm A*: https://pl.wikipedia.org/wiki/Algorytm_A*
+## Terminy
+* Kędzierski: 15.05
+* Trąbka: 22.05 - DRZEWA DECYZYJNE
+* Skibiński: 29.05
+* Woźnica: 
 
 
-Podział ról:
-- sieć neuronowa do rozpoznawania kontenerów
-  - numery
-  - obrazki (symbole)
-- drzewo decyzyjne
-- metoda rozmieszczania (globalna)
-
-Michał Kędzierski - korzystam z netbeans, stąd folder nbproject (tak zakladam)
+## Metody:
+* sieć neuronowa do rozpoznawania kontenerów poprzez numery
+* sieć neuronowa do rozpoznawania kontenerów poprzez obrazki/symbole
+* drzewo decyzyjne
+* metoda rozmieszczania (globalna)
