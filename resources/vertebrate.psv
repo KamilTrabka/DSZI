@@ -1,0 +1,17 @@
+Name|Fragile|Weight|Priority|Size|Destination
+1|yes|heavy|no|big|4
+2|yes|heavy|no|small|4
+3|yes|heavy|yes|big|1
+4|yes|heavy|yes|small|1
+5|yes|light|no|big|4
+6|yes|light|no|small|4
+7|yes|light|yes|big|1
+8|yes|light|yes|small|1
+9|no|heavy|no|big|3
+10|no|heavy|no|small|3
+11|no|heavy|yes|big|1
+12|no|heavy|yes|small|1
+13|no|light|no|big|2
+14|no|light|no|small|2
+15|no|light|yes|big|1
+16|no|light|yes|small|1
