@@ -22,7 +22,7 @@
 
 
 ## Metody:
-* sieć neuronowa do rozpoznawania kontenerów poprzez numery
+* sieć neuronowa do rozpoznawania kontenerów poprzez numery - Dawid ("DeepLearning for J", linki na kocu pdfa o neuronowych, Torch)
 * sieć neuronowa do rozpoznawania kontenerów poprzez obrazki/symbole
-* drzewo decyzyjne
-* metoda rozmieszczania (globalna)
+* drzewo decyzyjne - Kamil (WEKA)
+* metoda rozmieszczania (globalna) -- genetyczne - Skiba (jak rozmiescic paczki, np ze chemikalia nie obok zywnosci, albo obok np. toalety)
