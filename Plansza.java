@@ -10,9 +10,12 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -156,6 +159,7 @@ public class Plansza extends JPanel implements ActionListener {
 		graphics2d.fill(przeszkoda20);
 	
 		
+	
 		
 		droga.setColor(Color.green);
 		
@@ -290,62 +294,126 @@ public class Plansza extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
+		int[] zajetosc_in = {1,1};
 		
 		if(e.getSource()==pole2 || e.getSource()==potwierdz){
 			
-		String Komunikat="";
+		int pom_x = -1; int pom_y = -1;
+			
+			
+		String sciezka_astar="";
 		String Komunikat2="";
 		
 		
-		 DataSource source = null;
-		try {
-			source = new DataSource("resources/plik.arff");
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+					
+		// poczatek tree decision, budujemy drzewo na podst danych z pliku ------------------------------------------------------------
+							DataSource source = null;
+							try {
+								source = new DataSource("resources/plik.arff");
+							} catch (Exception e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							 Instances data = null;
+							try {
+								data = source.getDataSet();
+							} catch (Exception e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							 // setting class attribute if the data format does not provide this information
+							 // For example, the XRFF format saves the class attribute information as well
+							 if (data.classIndex() == -1)
+							   data.setClassIndex(data.numAttributes() - 1);
+							 
+							 String[] options = new String[1];
+							 options[0] = "-U";            
+							 J48 tree = new J48();         
+							 try {
+								tree.setOptions(options);
+							} catch (Exception e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}     // set the options
+							 try {
+								tree.buildClassifier(data);
+							} catch (Exception e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}   // build classifier
+							 
+							 System.out.println(tree);
+		// koniec budowania drzewa -----------------------------------------------------------------	
+							 
+			
+							 
+							 
+		// ruch wozka od srodka do strefy in --------------------------------------------------------
+							 
+		pole.append("W->: Ruszam do strefy IN.\n");
+								
+		sciezka_astar=AStar.test(1, 14, 19, 6, 9, 13, 11, Blokady);
+		//pole.append("W->:"+ sciezka_astar +"\n");						 
+		
+		sciezka_astar.substring(0,sciezka_astar.length()-1);
+		
+		String[] tab_sciezka = sciezka_astar.split("\\s+");
+		
+		for (int i = tab_sciezka.length-1; i >= 1 ; i--) {
+			
+			String temp;
+			temp = tab_sciezka[i].replace("[", "");
+			temp = temp.replace("]", "");
+			
+		   	//pole.append("W->:"+ temp +"\n");
+		   	
+		   	String[] parts = temp.split(",");
+		   	String part1 = parts[0]; 
+		   	String part2 = parts[1]; 
+		   	
+		   	//pole.append("W->:"+ part1 + " i " + part2 +"\n");
+		   	
+		   	int y = Integer.parseInt(part1);
+		   	int x = Integer.parseInt(part2);
+		   	
+		   	pojazd.setLocation(x*40 + 40, y*40 + 160);
+			paint(getGraphics());
+		   	
+			try {     // krok co 0.5 sekundy
+				TimeUnit.MILLISECONDS.sleep(500);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}	
+						
 		}
-		 Instances data = null;
-		try {
-			data = source.getDataSet();
-		} catch (Exception e1) {
+		
+	
+		// koniec ruchu wozka od srodka do strefy in --------------------------------------------------------
+		
+		
+		
+		try {  // pauza pomocnicza
+			TimeUnit.SECONDS.sleep(1);
+		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}
-		 // setting class attribute if the data format does not provide this information
-		 // For example, the XRFF format saves the class attribute information as well
-		 if (data.classIndex() == -1)
-		   data.setClassIndex(data.numAttributes() - 1);
+		}	
+		
+		
+		// wybor polki docelowej na podstawie treedecision	------				 
+		
+		Instance instance = new DenseInstance(7);
+		instance.setDataset(data);
+		instance.setValue(data.attribute(0), "false");
+		instance.setValue(data.attribute(1), "true");
+		instance.setValue(data.attribute(2), "light");
+		instance.setValue(data.attribute(3), 12.0);
+		instance.setValue(data.attribute(4), 123.0);
+		instance.setValue(data.attribute(5), 14.0);
 		 
-		 String[] options = new String[1];
-		 options[0] = "-U";            // unpruned tree
-		 J48 tree = new J48();         // new instance of tree
-		 try {
-			tree.setOptions(options);
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}     // set the options
-		 try {
-			tree.buildClassifier(data);
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}   // build classifier
+		int result = -1;
 		 
-		 System.out.println(tree);
-		 
-		 Instance instance = new DenseInstance(4);
-		 	
-			instance.setDataset(data);
-
-			instance.setValue(data.attribute(0), "false");
-			instance.setValue(data.attribute(1), "false");
-			instance.setValue(data.attribute(2), "heavy");
-		 
-		 
-		 
-		 
-		 int result = -1;
 		try {
 			result = (int) tree.classifyInstance(instance);
 		} catch (Exception e1) {
@@ -353,57 +421,100 @@ public class Plansza extends JPanel implements ActionListener {
 			e1.printStackTrace();
 		}
 		 
+		result++;
 		 
-		 System.out.println(result);
+		System.out.println(result);
 		 
-		 System.out.println("koniec treedecision");
-		 
+		pole.append("W->: Za pomoca treedecision wybrano polke: "+ (result) +".\n");
 		
-		
-			Komunikat2 =  ("123|no|heavy|yes");
 			
+		// koniec wyboru polki za pomoca treedecison ----------------------------------------------------------
+		
+		
+		
+		if (result == 1){
 			
+			pom_x = 0;
+			pom_y = 2;
+			
+		} else if (result == 2){
+			
+			pom_x = 0;
+			pom_y = 9;
+			
+		} else if (result == 3){
+			
+			pom_x = 0;
+			pom_y = 16;
+			
+		} else if (result == 4){
+			
+			pom_x = 13;
+			pom_y = 6;
+			
+		}
+		 
+			
+		sciezka_astar=AStar.test(1, 14, 19, 13, 11, pom_x, pom_y, Blokady);
+		sciezka_astar.substring(0,sciezka_astar.length()-1);
+		
+		String[] tab_sciezka2 = sciezka_astar.split("\\s+");
+		
+		for (int i = tab_sciezka2.length-1; i >= 1 ; i--) {
+			
+			String temp;
+			temp = tab_sciezka2[i].replace("[", "");
+			temp = temp.replace("]", "");
+			
+		   	//pole.append("W->:"+ temp +"\n");
+		   	
+		   	String[] parts = temp.split(",");
+		   	String part1 = parts[0]; 
+		   	String part2 = parts[1]; 
+		   	
+		   	//pole.append("W->:"+ part1 + " i " + part2 +"\n");
+		   	
+		   	int y = Integer.parseInt(part1);
+		   	int x = Integer.parseInt(part2);
+		   	
+		   	pojazd.setLocation(x*40 + 40, y*40 + 160);
+		   	kontener1.setLocation(x*40 + 40, y*40 + 160);
+			paint(getGraphics());
+		   	
+			try {     // krok co 0.5 sekundy
+				TimeUnit.MILLISECONDS.sleep(500);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}	
+						
+		}
+		
+		kontener1.setLocation(polka1miejsce1[0],polka1miejsce1[1]);
+		paint(getGraphics());
+		pole.append("W:-> Przeniesiono paczke na polke: " + result + ".\n");
+	
+		// koniec ruchu wozka od in do polki --------------------------------------------------------
 		
 		
-		pole.append("W->: Ruszam."+pole2.getText()+"\n");
-		
-		Komunikat=AStar.test(1, 14, 19, 6, 9, 13, 12, Blokady);
-		pole.append("W->: "+Komunikat+"\n");		
-		
-		pole.append("W->: Jade do polki nr: " + Komunikat2 +"\n");
-		
-		Komunikat=AStar.test(1, 14, 19, 13, 12, 0, 2, Blokady);
-		pole.append("W->: "+Komunikat+"\n");
 		
 	
-		
-		if(polka1miejsce1[2]==0){
-			WstawZero(kontener1xy[0],kontener1xy[1]);
-			pojazd.setLocation(120, 160);x=120;y=160; 
-			kontener1.setLocation(polka1miejsce1[0],polka1miejsce1[1]); polka1miejsce1[2]=1;
-			kontener1xy[0]=polka1miejsce1[0];
-			kontener1xy[1]=polka1miejsce1[1];
-			pole.append("W:-> Przeniesiono czerwony kontener na polke 1.\n");
-		}
-		else if(polka1miejsce2[2]==0){
-			pojazd.setLocation(120, 160);x=120;y=160; 
-			kontener1.setLocation(polka1miejsce2[0],polka1miejsce2[1]); polka1miejsce2[2]=1;
-			WstawZero(kontener1xy[0],kontener1xy[1]);
-			kontener1xy[0]=polka1miejsce2[0];
-			kontener1xy[1]=polka1miejsce2[1];
-			pole.append("W:-> Przeniesiono czerwony kontener na polke 1.\n");
-		}
-		else pole.append("W:-> Brak miejsca\n"); 
+	
 		
 		
 		}
 		
 		
+		try {
+			TimeUnit.SECONDS.sleep(1);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		
-		
-
 		
 		repaint();
+
 	}
 }
