@@ -130,10 +130,10 @@ public class Plansza extends JPanel implements ActionListener {
 		graphics2d.fill(pojazd);
 		graphics2d.setColor(Color.RED);
 		graphics2d.fill(kontener1);
-		//graphics2d.setColor(Color.ORANGE);
-		//graphics2d.fill(kontener2);
-		//graphics2d.setColor(Color.GREEN);
-		//graphics2d.fill(kontener3);
+		graphics2d.setColor(Color.ORANGE);
+		graphics2d.fill(kontener2);
+		graphics2d.setColor(Color.GREEN);
+		graphics2d.fill(kontener3);
 		
 		graphics2d.setColor(Color.GRAY);
 		graphics2d.fill(przeszkoda1);
@@ -253,53 +253,28 @@ public class Plansza extends JPanel implements ActionListener {
 	int[] polka2miejsce1 = {365,85,0};
 	int[] polka2miejsce2 = {445,85,0};
 	//polka 3
-	int[] polka3miejsce1 = {645,85,0}; //645, 85
-	int[] polka3miejsce2 = {725,85,0}; //725, 85
+	int[] polka3miejsce1 = {645,85,0}; 
+	int[] polka3miejsce2 = {725,85,0}; 
 	//polka 4
-	int[] polka4miejsce1 = {85,365,0}; //85, 365
-	int[] polka4miejsce2 = {85,445,0}; //85, 445
-	int[] polka4miejsce3 = {85,525,0}; //85, 525
-	//polka 5
-	int[] polka5miejsce1 = {725,365,0}; //725, 365
-	int[] polka5miejsce2 = {725,445,0}; // 725, 445
-	int[] polka5miejsce3 = {725,525,0}; //725, 525
-	//out
-	int[] outmiejsce1 = {285,765,0}; //
-	int[] outmiejsce2 = {325,765,0}; //
+	int[] polka4miejsce1 = {285,765,0}; 
+	int[] polka4miejsce2 = {325,765,0}; 
 	
-	//Wazna funkcja, po przeniesieniu robi puste miejsce na polce
-	public void WstawZero(int x, int y){
-		//polka1
-		if(polka1miejsce1[0]==x && polka1miejsce1[1]==y){polka1miejsce1[2]=0;}
-		if(polka1miejsce2[0]==x && polka1miejsce2[1]==y){polka1miejsce2[2]=0;}
-		//polka2
-		if(polka2miejsce1[0]==x && polka2miejsce1[1]==y){polka2miejsce1[2]=0;}
-		if(polka2miejsce2[0]==x && polka2miejsce2[1]==y){polka2miejsce2[2]=0;}
-		//polka3
-		if(polka3miejsce1[0]==x && polka3miejsce1[1]==y){polka3miejsce1[2]=0;}
-		if(polka3miejsce2[0]==x && polka3miejsce2[1]==y){polka3miejsce2[2]=0;}
-		//polka4
-		if(polka4miejsce1[0]==x && polka4miejsce1[1]==y){polka4miejsce1[2]=0;}
-		if(polka4miejsce2[0]==x && polka4miejsce2[1]==y){polka4miejsce2[2]=0;}
-		if(polka4miejsce1[0]==x && polka4miejsce1[1]==y){polka4miejsce1[2]=0;}
-		//polka5
-		if(polka5miejsce1[0]==x && polka5miejsce1[1]==y){polka5miejsce1[2]=0;}
-		if(polka5miejsce2[0]==x && polka5miejsce2[1]==y){polka5miejsce2[2]=0;}
-		if(polka5miejsce1[0]==x && polka5miejsce1[1]==y){polka5miejsce1[2]=0;}
-		//polka out
-		if(outmiejsce1[0]==x && outmiejsce1[1]==y){outmiejsce1[2]=0;}
-		if(outmiejsce2[0]==x && outmiejsce2[1]==y){outmiejsce2[2]=0;}
-	}
+
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		int[] zajetosc_in = {1,1};
+		int[] zajetosc_in = {1,1,1};
+		
+		Paczka paczkaA = new Paczka("true", "false", "mid", 16.0, 27.0, 30.0);
+		Paczka paczkaB = new Paczka("true", "false", "mid", 16.0, 27.0, 30.0);
+		Paczka paczkaC = new Paczka("false", "true", "light",12.0, 123.0, 14.0);
+		
 		
 		if(e.getSource()==pole2 || e.getSource()==potwierdz){
 			
 		int pom_x = -1; int pom_y = -1;
-			
+		int ppom_x = -1; int ppom_y = -1;	
 			
 		String sciezka_astar="";
 		String Komunikat2="";
@@ -380,7 +355,7 @@ public class Plansza extends JPanel implements ActionListener {
 			paint(getGraphics());
 		   	
 			try {     // krok co 0.5 sekundy
-				TimeUnit.MILLISECONDS.sleep(500);
+				TimeUnit.MILLISECONDS.sleep(200);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -401,105 +376,586 @@ public class Plansza extends JPanel implements ActionListener {
 		}	
 		
 		
-		// wybor polki docelowej na podstawie treedecision	------				 
-		
-		Instance instance = new DenseInstance(7);
-		instance.setDataset(data);
-		instance.setValue(data.attribute(0), "false");
-		instance.setValue(data.attribute(1), "true");
-		instance.setValue(data.attribute(2), "light");
-		instance.setValue(data.attribute(3), 12.0);
-		instance.setValue(data.attribute(4), 123.0);
-		instance.setValue(data.attribute(5), 14.0);
-		 
-		int result = -1;
-		 
-		try {
-			result = (int) tree.classifyInstance(instance);
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		 
-		result++;
-		 
-		System.out.println(result);
-		 
-		pole.append("W->: Za pomoca treedecision wybrano polke: "+ (result) +".\n");
-		
+		// jezeli jest paczka na 1. miejscu to ja oslugujemy	---------------------------------------				 
+		if (zajetosc_in[0]==1){
 			
-		// koniec wyboru polki za pomoca treedecison ----------------------------------------------------------
-		
-		
-		
-		if (result == 1){
+			Instance instance = new DenseInstance(7);
+			instance.setDataset(data);
+			instance.setValue(data.attribute(0), paczkaA.Priorytet);
+			instance.setValue(data.attribute(1), paczkaA.Fragile);
+			instance.setValue(data.attribute(2), paczkaA.Waga);
+			instance.setValue(data.attribute(3), paczkaA.RozmX);
+			instance.setValue(data.attribute(4), paczkaA.RozmY);
+			instance.setValue(data.attribute(5), paczkaA.RozmZ);
+			 
 			
-			pom_x = 0;
-			pom_y = 2;
-			
-		} else if (result == 2){
-			
-			pom_x = 0;
-			pom_y = 9;
-			
-		} else if (result == 3){
-			
-			pom_x = 0;
-			pom_y = 16;
-			
-		} else if (result == 4){
-			
-			pom_x = 13;
-			pom_y = 6;
-			
-		}
-		 
-			
-		sciezka_astar=AStar.test(1, 14, 19, 13, 11, pom_x, pom_y, Blokady);
-		sciezka_astar.substring(0,sciezka_astar.length()-1);
-		
-		String[] tab_sciezka2 = sciezka_astar.split("\\s+");
-		
-		for (int i = tab_sciezka2.length-1; i >= 1 ; i--) {
-			
-			String temp;
-			temp = tab_sciezka2[i].replace("[", "");
-			temp = temp.replace("]", "");
-			
-		   	//pole.append("W->:"+ temp +"\n");
-		   	
-		   	String[] parts = temp.split(",");
-		   	String part1 = parts[0]; 
-		   	String part2 = parts[1]; 
-		   	
-		   	//pole.append("W->:"+ part1 + " i " + part2 +"\n");
-		   	
-		   	int y = Integer.parseInt(part1);
-		   	int x = Integer.parseInt(part2);
-		   	
-		   	pojazd.setLocation(x*40 + 40, y*40 + 160);
-		   	kontener1.setLocation(x*40 + 40, y*40 + 160);
-			paint(getGraphics());
-		   	
-			try {     // krok co 0.5 sekundy
-				TimeUnit.MILLISECONDS.sleep(500);
-			} catch (InterruptedException e1) {
+			 
+			int result = -1;
+			 
+			try {
+				result = (int) tree.classifyInstance(instance);
+			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-			}	
-						
+			}
+			 
+			result++;
+			 
+			System.out.println(result);
+			 
+			pole.append("W->: Za pomoca treedecision wybrano polke: "+ (result) +".\n");
+			
+				
+			if (result == 1){
+				
+				pom_x = 0;
+				pom_y = 2;
+				
+				if (polka1miejsce1[2]==0){
+					ppom_x = polka1miejsce1[0];
+					ppom_y = polka1miejsce1[1];
+					polka1miejsce1[2]=1;
+				} else if (polka1miejsce2[2]==0){
+					ppom_x = polka1miejsce2[0];
+					ppom_y = polka1miejsce2[1];
+					polka1miejsce2[2]=1;
+				} else {
+					
+				}
+				
+				
+				
+			} else if (result == 2){
+				
+				pom_x = 0;
+				pom_y = 9;
+				
+				if (polka2miejsce1[2]==0){
+					ppom_x = polka2miejsce1[0];
+					ppom_y = polka2miejsce1[1];
+					polka2miejsce1[2]=1;
+				} else if (polka2miejsce2[2]==0){
+					ppom_x = polka2miejsce2[0];
+					ppom_y = polka2miejsce2[1];
+					polka2miejsce2[2]=1;
+				} else {
+					
+				}
+				
+				
+			} else if (result == 3){
+				
+				pom_x = 0;
+				pom_y = 16;
+				
+				if (polka3miejsce1[2]==0){
+					ppom_x = polka3miejsce1[0];
+					ppom_y = polka3miejsce1[1];
+					polka3miejsce1[2]=1;
+				} else if (polka3miejsce2[2]==0){
+					ppom_x = polka3miejsce2[0];
+					ppom_y = polka3miejsce2[1];
+					polka3miejsce2[2]=1;
+				} else {
+					
+				}
+				
+			} else if (result == 4){
+				
+				pom_x = 13;
+				pom_y = 6;
+				
+				if (polka4miejsce1[2]==0){
+					ppom_x = polka4miejsce1[0];
+					ppom_y = polka4miejsce1[1];
+					polka4miejsce1[2]=1;
+				} else if (polka4miejsce2[2]==0){
+					ppom_x = polka4miejsce2[0];
+					ppom_y = polka4miejsce2[1];
+					polka4miejsce2[2]=1;
+				} else {
+					
+				}
+				
+			}
+			
+			
+			sciezka_astar=AStar.test(1, 14, 19, 13, 11, pom_x, pom_y, Blokady);
+			sciezka_astar.substring(0,sciezka_astar.length()-1);
+			
+			String[] tab_sciezka2 = sciezka_astar.split("\\s+");
+			
+			for (int i = tab_sciezka2.length-1; i >= 1 ; i--) {
+				
+				String temp;
+				temp = tab_sciezka2[i].replace("[", "");
+				temp = temp.replace("]", "");
+				
+			   	//pole.append("W->:"+ temp +"\n");
+			   	
+			   	String[] parts = temp.split(",");
+			   	String part1 = parts[0]; 
+			   	String part2 = parts[1]; 
+			   	
+			   	//pole.append("W->:"+ part1 + " i " + part2 +"\n");
+			   	
+			   	int y = Integer.parseInt(part1);
+			   	int x = Integer.parseInt(part2);
+			   	
+			   	pojazd.setLocation(x*40 + 40, y*40 + 160);
+			   	kontener1.setLocation(x*40 + 40, y*40 + 160);
+				paint(getGraphics());
+			   	
+				try {     // krok co 0.5 sekundy
+					TimeUnit.MILLISECONDS.sleep(200);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}	
+							
+			}
+			
+			kontener1.setLocation(ppom_x,ppom_y);
+			paint(getGraphics());
+			pole.append("W:-> Przeniesiono paczke na polke: " + result + ".\n");
+			zajetosc_in[0]=0;
+			
+			sciezka_astar=AStar.test(1, 14, 19, pom_x, pom_y, 13, 11, Blokady);
+			sciezka_astar.substring(0,sciezka_astar.length()-1);
+			
+			String[] tab_sciezka3 = sciezka_astar.split("\\s+");
+			
+			for (int i = tab_sciezka3.length-1; i >= 1 ; i--) {
+				
+				String temp;
+				temp = tab_sciezka3[i].replace("[", "");
+				temp = temp.replace("]", "");
+				
+			   	//pole.append("W->:"+ temp +"\n");
+			   	
+			   	String[] parts = temp.split(",");
+			   	String part1 = parts[0]; 
+			   	String part2 = parts[1]; 
+			   	
+			   	//pole.append("W->:"+ part1 + " i " + part2 +"\n");
+			   	
+			   	int y = Integer.parseInt(part1);
+			   	int x = Integer.parseInt(part2);
+			   	
+			   	pojazd.setLocation(x*40 + 40, y*40 + 160);
+			   	
+				paint(getGraphics());
+			   	
+				try {     // krok co 0.5 sekundy
+					TimeUnit.MILLISECONDS.sleep(200);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}	
+							
+			}
+			
+			
+			
+		
 		}
+		// koniec obslugi paczki z miejsca 1., wozek jest przy in
 		
-		kontener1.setLocation(polka1miejsce1[0],polka1miejsce1[1]);
-		paint(getGraphics());
-		pole.append("W:-> Przeniesiono paczke na polke: " + result + ".\n");
-	
-		// koniec ruchu wozka od in do polki --------------------------------------------------------
+		try {  // pauza pomocnicza
+			TimeUnit.SECONDS.sleep(1);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}	
+		
+		
+		// jezeli jest paczka na 2. miejscu to ja oslugujemy	---------------------------------------				 
+				if (zajetosc_in[1]==1){
+					
+					Instance instance = new DenseInstance(7);
+					instance.setDataset(data);
+					instance.setValue(data.attribute(0), paczkaB.Priorytet);
+					instance.setValue(data.attribute(1), paczkaB.Fragile);
+					instance.setValue(data.attribute(2), paczkaB.Waga);
+					instance.setValue(data.attribute(3), paczkaB.RozmX);
+					instance.setValue(data.attribute(4), paczkaB.RozmY);
+					instance.setValue(data.attribute(5), paczkaB.RozmZ);
+					 
+					
+					 
+					int result = -1;
+					 
+					try {
+						result = (int) tree.classifyInstance(instance);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					 
+					result++;
+					 
+					System.out.println(result);
+					 
+					pole.append("W->: Za pomoca treedecision wybrano polke: "+ (result) +".\n");
+					
+						
+					if (result == 1){
+						
+						pom_x = 0;
+						pom_y = 2;
+						
+						if (polka1miejsce1[2]==0){
+							ppom_x = polka1miejsce1[0];
+							ppom_y = polka1miejsce1[1];
+							polka1miejsce1[2]=1;
+						} else if (polka1miejsce2[2]==0){
+							ppom_x = polka1miejsce2[0];
+							ppom_y = polka1miejsce2[1];
+							polka1miejsce2[2]=1;
+						} else {
+							
+						}
+						
+						
+						
+					} else if (result == 2){
+						
+						pom_x = 0;
+						pom_y = 9;
+						
+						if (polka2miejsce1[2]==0){
+							ppom_x = polka2miejsce1[0];
+							ppom_y = polka2miejsce1[1];
+							polka2miejsce1[2]=1;
+						} else if (polka2miejsce2[2]==0){
+							ppom_x = polka2miejsce2[0];
+							ppom_y = polka2miejsce2[1];
+							polka2miejsce2[2]=1;
+						} else {
+							
+						}
+						
+						
+					} else if (result == 3){
+						
+						pom_x = 0;
+						pom_y = 16;
+						
+						if (polka3miejsce1[2]==0){
+							ppom_x = polka3miejsce1[0];
+							ppom_y = polka3miejsce1[1];
+							polka3miejsce1[2]=1;
+						} else if (polka3miejsce2[2]==0){
+							ppom_x = polka3miejsce2[0];
+							ppom_y = polka3miejsce2[1];
+							polka3miejsce2[2]=1;
+						} else {
+							
+						}
+						
+					} else if (result == 4){
+						
+						pom_x = 13;
+						pom_y = 6;
+						
+						if (polka4miejsce1[2]==0){
+							ppom_x = polka4miejsce1[0];
+							ppom_y = polka4miejsce1[1];
+							polka4miejsce1[2]=1;
+						} else if (polka4miejsce2[2]==0){
+							ppom_x = polka4miejsce2[0];
+							ppom_y = polka4miejsce2[1];
+							polka4miejsce2[2]=1;
+						} else {
+							
+						}
+						
+					}
+					
+					
+					sciezka_astar=AStar.test(1, 14, 19, 13, 11, pom_x, pom_y, Blokady);
+					sciezka_astar.substring(0,sciezka_astar.length()-1);
+					
+					String[] tab_sciezka2 = sciezka_astar.split("\\s+");
+					
+					for (int i = tab_sciezka2.length-1; i >= 1 ; i--) {
+						
+						String temp;
+						temp = tab_sciezka2[i].replace("[", "");
+						temp = temp.replace("]", "");
+						
+					   	//pole.append("W->:"+ temp +"\n");
+					   	
+					   	String[] parts = temp.split(",");
+					   	String part1 = parts[0]; 
+					   	String part2 = parts[1]; 
+					   	
+					   	//pole.append("W->:"+ part1 + " i " + part2 +"\n");
+					   	
+					   	int y = Integer.parseInt(part1);
+					   	int x = Integer.parseInt(part2);
+					   	
+					   	pojazd.setLocation(x*40 + 40, y*40 + 160);
+					   	kontener2.setLocation(x*40 + 40, y*40 + 160);
+						paint(getGraphics());
+					   	
+						try {     // krok co 0.5 sekundy
+							TimeUnit.MILLISECONDS.sleep(200);
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}	
+									
+					}
+					
+					kontener2.setLocation(ppom_x,ppom_y);
+					paint(getGraphics());
+					pole.append("W:-> Przeniesiono paczke na polke: " + result + ".\n");
+					
+					
+					sciezka_astar=AStar.test(1, 14, 19, pom_x, pom_y, 13, 11, Blokady);
+					sciezka_astar.substring(0,sciezka_astar.length()-1);
+					
+					String[] tab_sciezka3 = sciezka_astar.split("\\s+");
+					
+					for (int i = tab_sciezka3.length-1; i >= 1 ; i--) {
+						
+						String temp;
+						temp = tab_sciezka3[i].replace("[", "");
+						temp = temp.replace("]", "");
+						
+					   	//pole.append("W->:"+ temp +"\n");
+					   	
+					   	String[] parts = temp.split(",");
+					   	String part1 = parts[0]; 
+					   	String part2 = parts[1]; 
+					   	
+					   	//pole.append("W->:"+ part1 + " i " + part2 +"\n");
+					   	
+					   	int y = Integer.parseInt(part1);
+					   	int x = Integer.parseInt(part2);
+					   	
+					   	pojazd.setLocation(x*40 + 40, y*40 + 160);
+					   	
+						paint(getGraphics());
+					   	
+						try {     // krok co 0.5 sekundy
+							TimeUnit.MILLISECONDS.sleep(200);
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}	
+									
+					}
+					
+					
+					
+				
+				}
+		
+		
+				
+				try {  // pauza pomocnicza
+					TimeUnit.SECONDS.sleep(1);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}	
+				
+				
+		
+				// jezeli jest paczka na 3. miejscu to ja oslugujemy	---------------------------------------				 
+				if (zajetosc_in[2]==1){
+					
+					Instance instance = new DenseInstance(7);
+					instance.setDataset(data);
+					instance.setValue(data.attribute(0), paczkaC.Priorytet);
+					instance.setValue(data.attribute(1), paczkaC.Fragile);
+					instance.setValue(data.attribute(2), paczkaC.Waga);
+					instance.setValue(data.attribute(3), paczkaC.RozmX);
+					instance.setValue(data.attribute(4), paczkaC.RozmY);
+					instance.setValue(data.attribute(5), paczkaC.RozmZ);
+					 
+					
+					 
+					int result = -1;
+					 
+					try {
+						result = (int) tree.classifyInstance(instance);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					 
+					result++;
+					 
+					System.out.println(result);
+					 
+					pole.append("W->: Za pomoca treedecision wybrano polke: "+ (result) +".\n");
+					
+						
+if (result == 1){
+						
+						pom_x = 0;
+						pom_y = 2;
+						
+						if (polka1miejsce1[2]==0){
+							ppom_x = polka1miejsce1[0];
+							ppom_y = polka1miejsce1[1];
+							polka1miejsce1[2]=1;
+						} else if (polka1miejsce2[2]==0){
+							ppom_x = polka1miejsce2[0];
+							ppom_y = polka1miejsce2[1];
+							polka1miejsce2[2]=1;
+						} else {
+							
+						}
+						
+						
+						
+					} else if (result == 2){
+						
+						pom_x = 0;
+						pom_y = 9;
+						
+						if (polka2miejsce1[2]==0){
+							ppom_x = polka2miejsce1[0];
+							ppom_y = polka2miejsce1[1];
+							polka2miejsce1[2]=1;
+						} else if (polka2miejsce2[2]==0){
+							ppom_x = polka2miejsce2[0];
+							ppom_y = polka2miejsce2[1];
+							polka2miejsce2[2]=1;
+						} else {
+							
+						}
+						
+						
+					} else if (result == 3){
+						
+						pom_x = 0;
+						pom_y = 16;
+						
+						if (polka3miejsce1[2]==0){
+							ppom_x = polka3miejsce1[0];
+							ppom_y = polka3miejsce1[1];
+							polka3miejsce1[2]=1;
+						} else if (polka3miejsce2[2]==0){
+							ppom_x = polka3miejsce2[0];
+							ppom_y = polka3miejsce2[1];
+							polka3miejsce2[2]=1;
+						} else {
+							
+						}
+						
+					} else if (result == 4){
+						
+						pom_x = 13;
+						pom_y = 6;
+						
+						if (polka4miejsce1[2]==0){
+							ppom_x = polka4miejsce1[0];
+							ppom_y = polka4miejsce1[1];
+							polka4miejsce1[2]=1;
+						} else if (polka4miejsce2[2]==0){
+							ppom_x = polka4miejsce2[0];
+							ppom_y = polka4miejsce2[1];
+							polka4miejsce2[2]=1;
+						} else {
+							
+						}
+						
+					}
+					
+					
+					sciezka_astar=AStar.test(1, 14, 19, 13, 11, pom_x, pom_y, Blokady);
+					sciezka_astar.substring(0,sciezka_astar.length()-1);
+					
+					String[] tab_sciezka2 = sciezka_astar.split("\\s+");
+					
+					for (int i = tab_sciezka2.length-1; i >= 1 ; i--) {
+						
+						String temp;
+						temp = tab_sciezka2[i].replace("[", "");
+						temp = temp.replace("]", "");
+						
+					   	//pole.append("W->:"+ temp +"\n");
+					   	
+					   	String[] parts = temp.split(",");
+					   	String part1 = parts[0]; 
+					   	String part2 = parts[1]; 
+					   	
+					   	//pole.append("W->:"+ part1 + " i " + part2 +"\n");
+					   	
+					   	int y = Integer.parseInt(part1);
+					   	int x = Integer.parseInt(part2);
+					   	
+					   	pojazd.setLocation(x*40 + 40, y*40 + 160);
+					   	kontener3.setLocation(x*40 + 40, y*40 + 160);
+						paint(getGraphics());
+					   	
+						try {     // krok co 0.5 sekundy
+							TimeUnit.MILLISECONDS.sleep(200);
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}	
+									
+					}
+					
+					kontener3.setLocation(ppom_x,ppom_y);
+					paint(getGraphics());
+					pole.append("W:-> Przeniesiono paczke na polke: " + result + ".\n");
+					
+					
+					sciezka_astar=AStar.test(1, 14, 19, pom_x, pom_y, 13, 11, Blokady);
+					sciezka_astar.substring(0,sciezka_astar.length()-1);
+					
+					String[] tab_sciezka3 = sciezka_astar.split("\\s+");
+					
+					for (int i = tab_sciezka3.length-1; i >= 1 ; i--) {
+						
+						String temp;
+						temp = tab_sciezka3[i].replace("[", "");
+						temp = temp.replace("]", "");
+						
+					   	//pole.append("W->:"+ temp +"\n");
+					   	
+					   	String[] parts = temp.split(",");
+					   	String part1 = parts[0]; 
+					   	String part2 = parts[1]; 
+					   	
+					   	//pole.append("W->:"+ part1 + " i " + part2 +"\n");
+					   	
+					   	int y = Integer.parseInt(part1);
+					   	int x = Integer.parseInt(part2);
+					   	
+					   	pojazd.setLocation(x*40 + 40, y*40 + 160);
+					   	
+						paint(getGraphics());
+					   	
+						try {     // krok co 0.5 sekundy
+							TimeUnit.MILLISECONDS.sleep(200);
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}	
+									
+					}
+					
+					
+					
+				
+				}
 		
 		
 		
-	
-	
+		
+		
+		
+		
+		
+		
 		
 		
 		}
